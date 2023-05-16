@@ -1,5 +1,5 @@
-# Cryptocurrency_Tracker
-Cryptocurrency Tracker App Demo in Flutter
+# music_player_demo
+Music Player App Demo in Flutter
 
 # Environment
 Android Studio Electric Eel | 2022.1.1 Patch 1 <br>
