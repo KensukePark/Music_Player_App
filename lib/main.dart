@@ -80,14 +80,17 @@ class _AllSongsState extends State<AllSongs> {
             return Center(child: Text('No Songs found'));
           }
           return ListView.builder(itemBuilder: (context, index) => ListTile(
-            title: Text(item.data![index].displayNameWOExt),
+            title: Text(item.data![index].title),
             subtitle: Text('${item.data![index].artist}'),
             trailing: const Icon(Icons.more_horiz),
             leading: const CircleAvatar(
               child: Icon(Icons.music_note),
             ),
             onTap: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => playing_screen()));
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => playing_screen(songModel: item.data![index],audioPlayer: _audioPlayer,)));
               //playSong(item.data![index].uri);
               }
             ),  itemCount: item.data!.length,
