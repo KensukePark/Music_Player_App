@@ -77,14 +77,15 @@ class _AllSongsState extends State<AllSongs> {
             );
           }
           if (item.data!.isEmpty) {
-            return Center(child: Text('No Songs found'));
+            return Center(child: Text('Nothing found!'));
           }
           return ListView.builder(itemBuilder: (context, index) => ListTile(
             title: Text(item.data![index].title),
             subtitle: Text('${item.data![index].artist}'),
             trailing: const Icon(Icons.more_horiz),
-            leading: const CircleAvatar(
-              child: Icon(Icons.music_note),
+            leading: QueryArtworkWidget(
+              id: item.data![index].id,
+              type: ArtworkType.AUDIO,
             ),
             onTap: () {
               Navigator.push(

@@ -71,9 +71,11 @@ class _playing_screenState extends State<playing_screen> {
               Center(
                 child: Column(
                   children: [
-                    CircleAvatar(
-                      radius: 100.0,
-                      child: Icon(Icons.music_note, size: 80,)
+                    QueryArtworkWidget(
+                      id: widget.songModel.id,
+                      type: ArtworkType.AUDIO,
+                      artworkHeight: 200,
+                      artworkWidth: 200,
                     ),
                     SizedBox(
                       height: 30.0,
@@ -101,34 +103,50 @@ class _playing_screenState extends State<playing_screen> {
                     SizedBox(
                       height: 80.0,
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                    Stack(
                       children: [
-                        Text(
-                          _pos.toString().split(".")[0].substring(2)
-                        ),
-                        Expanded(
+                        SliderTheme(
+                            data: SliderThemeData(
+                              thumbShape: RoundSliderThumbShape(enabledThumbRadius: 8),
+                            ),
                             child: Slider(
-
                               min: const Duration(microseconds: 0).inSeconds.toDouble(),
                               value: _pos.inSeconds.toDouble(),
                               max: _dur.inSeconds.toDouble(),
                               onChanged: (value) {
-                                  setState(() {
-                                    changeToSeconds(value.toInt());
-                                    value = value;
-                                  });
+                                setState(() {
+                                  changeToSeconds(value.toInt());
+                                  value = value;
+                                });
                               },
                               thumbColor: Colors.white,
                               activeColor: Colors.grey,
                               inactiveColor: Colors.grey,
-                            )
+                            ),
                         ),
-                        Text(
-                          _dur.toString().split(".")[0].substring(2)
+                        Positioned(
+                          top: 35,
+                          left: (2),
+                          child: Text( '       '+
+                              _pos.toString().split(".")[0].substring(2),
+                            style: TextStyle(
+                              fontSize: 12.0,
+                            ),
+                          ),
+                        ),
+                        Positioned(
+                          top: 35,
+                          right: (2),
+                          child: Text(
+                              _dur.toString().split(".")[0].substring(2) + '       ',
+                            style: TextStyle(
+                              fontSize: 12.0,
+                            ),
+                          ),
                         ),
                       ],
                     ),
+
                     SizedBox(
                       height: 20.0,
                     ),
