@@ -1,4 +1,8 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:just_audio/just_audio.dart';
+import 'package:music_player_demo/Screens/playing_screen.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -37,6 +41,18 @@ class _AllSongsState extends State<AllSongs> {
     Permission.storage.request();
   }
   final _audioQuery = new OnAudioQuery();
+  final AudioPlayer _audioPlayer = AudioPlayer();
+  playSong(String? uri) {
+    try {
+      _audioPlayer.setAudioSource(
+          AudioSource.uri(
+              Uri.parse(uri!)
+          )
+      );
+    } on Exception {
+      log("Error parsing song");
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -64,14 +80,19 @@ class _AllSongsState extends State<AllSongs> {
             return Center(child: Text('No Songs found'));
           }
           return ListView.builder(itemBuilder: (context, index) => ListTile(
-            leading: const Icon(Icons.music_note),
             title: Text(item.data![index].displayNameWOExt),
             subtitle: Text('${item.data![index].artist}'),
             trailing: const Icon(Icons.more_horiz),
+            leading: const CircleAvatar(
+              child: Icon(Icons.music_note),
+            ),
+            onTap: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => playing_screen()));
+              //playSong(item.data![index].uri);
+              }
             ),  itemCount: item.data!.length,
           );
         }
-
       )
     );
   }
