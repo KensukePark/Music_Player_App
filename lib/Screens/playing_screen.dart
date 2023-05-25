@@ -276,7 +276,7 @@ class _playing_screenState extends State<playing_screen> {
                             fixedSize: const Size(50, 20),
                           ),
                           child: Text(
-                              '${_speed[_bool.indexOf(true)]} x',
+                              '${_speed[_bool.indexOf(true)]}x',
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 16,
