@@ -62,41 +62,59 @@ class _AllSongsState extends State<AllSongs> {
           IconButton(onPressed: (){}, icon: Icon(Icons.search),),
         ],
       ),
-      body: FutureBuilder<List<SongModel>> (
-        future: _audioQuery.querySongs(
-          sortType: null,
-          orderType: OrderType.ASC_OR_SMALLER,
-          uriType: UriType.EXTERNAL,
-          ignoreCase: true,
-        ),
-        builder: (context, item) {
-          if(item.data == null) {
-            return const Center(
-              child: CircularProgressIndicator(),
+      body: Center(
+        child: SingleChildScrollView(
+          physics: ScrollPhysics(),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              FutureBuilder<List<SongModel>> (
+                future: _audioQuery.querySongs(
+                  sortType: null,
+                  orderType: OrderType.ASC_OR_SMALLER,
+                  uriType: UriType.EXTERNAL,
+                  ignoreCase: true,
+                ),
+                builder: (context, item) {
+                  if(item.data == null) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
 
-            );
-          }
-          if (item.data!.isEmpty) {
-            return Center(child: Text('Nothing found!'));
-          }
-          return ListView.builder(itemBuilder: (context, index) => ListTile(
-            title: Text(item.data![index].title),
-            subtitle: Text('${item.data![index].artist}'),
-            trailing: const Icon(Icons.more_horiz),
-            leading: QueryArtworkWidget(
-              id: item.data![index].id,
-              type: ArtworkType.AUDIO,
-            ),
-            onTap: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => playing_screen(songModel: item.data![index],audioPlayer: _audioPlayer,)));
-              //playSong(item.data![index].uri);
-              }
-            ),  itemCount: item.data!.length,
-          );
-        }
+                    );
+                  }
+                  if (item.data!.isEmpty) {
+                    return Center(child: Text('Nothing found!'));
+                  }
+                  return ListView.builder(
+                    physics: NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    itemBuilder: (context, index) => ListTile(
+                    title: Text(item.data![index].title),
+                    subtitle: Text('${item.data![index].artist}'),
+                    trailing: const Icon(Icons.more_horiz),
+                    leading: QueryArtworkWidget(
+                      id: item.data![index].id,
+                      type: ArtworkType.AUDIO,
+                    ),
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => playing_screen(
+                                item: item.data,
+                                idx: index,
+                                //next_songModel: item.data![index == item.data?.length ? 0 : ++index],
+                                audioPlayer: _audioPlayer,)));
+                      //playSong(item.data![index].uri);
+                      }
+                    ),  itemCount: item.data!.length,
+                  );
+                }
+              ),
+
+            ],
+          ),
+        ),
       )
     );
   }
