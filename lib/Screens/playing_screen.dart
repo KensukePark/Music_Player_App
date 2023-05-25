@@ -8,23 +8,21 @@ import 'package:on_audio_query/on_audio_query.dart';
 
 class playing_screen extends StatefulWidget {
   const playing_screen({Key? key, required this.item, required this.idx, required this.audioPlayer}) : super(key: key);
-  final List<SongModel>? item;
-  final AudioPlayer audioPlayer;
-  final int idx;
+  final List<SongModel>? item; //songModel 받아옴
+  final AudioPlayer audioPlayer; //플레이어
+  final int idx; //선택한 곡의 인덱스
   @override
   State<playing_screen> createState() => _playing_screenState();
 }
 
 class _playing_screenState extends State<playing_screen> {
-  Duration _dur = const Duration();
-  Duration _pos = const Duration();
-  bool _isPlaying = false;
-  bool _volume = true;
-  late int idx_play = widget.idx;
-  late Timer _timer;
-  var _time = 0;
-  late List<bool> _bool = [true, false, false, false];
-  late List<double> _speed = [1.0, 1.5, 2.0, 0.5];
+  Duration _dur = const Duration(); //곡 길이
+  Duration _pos = const Duration(); //현재 플레이 시간
+  bool _isPlaying = false; //재생중인지 확인용 변수
+  bool _volume = true; //볼륨 온,오프 확인용 변수
+  late int idx_play = widget.idx; //선택한 곡의 인덱스 임시 저장
+  late List<bool> _bool = [true, false, false, false]; //재생 속도 변경 기능 구현용 리스트
+  late List<double> _speed = [1.0, 1.5, 2.0, 0.5]; //재생 속도 리스트
 
   void initState() {
     super.initState();
