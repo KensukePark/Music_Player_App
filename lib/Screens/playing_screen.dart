@@ -1,7 +1,4 @@
-import 'dart:async';
 import 'dart:developer';
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:on_audio_query/on_audio_query.dart';
@@ -225,6 +222,7 @@ class _playing_screenState extends State<playing_screen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
+                        //볼륨 온오프 버튼
                         IconButton(
                           onPressed: () {
                             setState(() {
@@ -240,6 +238,7 @@ class _playing_screenState extends State<playing_screen> {
                           },
                           icon: Icon(_volume == true ? Icons.volume_down : Icons.volume_off, size: 30.0,),
                         ),
+                        //이전곡 재생 버튼
                         IconButton(
                           onPressed: () {
                             setState(() {
@@ -248,6 +247,7 @@ class _playing_screenState extends State<playing_screen> {
                           },
                           icon: Icon(Icons.skip_previous, size: 30.0,),
                         ),
+                        //재생,중지 버튼
                         IconButton(
                           onPressed: () {
                             setState(() {
@@ -261,6 +261,7 @@ class _playing_screenState extends State<playing_screen> {
                           },
                           icon: Icon(_isPlaying ? Icons.pause : Icons.play_arrow, size: 30.0,)
                         ),
+                        //다음곡 재생 버튼
                         IconButton(
                           onPressed: () {
                             setState(() {
@@ -269,6 +270,7 @@ class _playing_screenState extends State<playing_screen> {
                           },
                           icon: Icon(Icons.skip_next, size: 30.0,),
                         ),
+                        //재생 속도 변경 버튼
                         TextButton(
                           style: TextButton.styleFrom(
                             fixedSize: const Size(50, 20),
