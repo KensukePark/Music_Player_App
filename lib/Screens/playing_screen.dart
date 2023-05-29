@@ -1,7 +1,9 @@
 import 'dart:developer';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:on_audio_query/on_audio_query.dart';
+import 'package:marquee/marquee.dart';
 
 class playing_screen extends StatefulWidget {
   const playing_screen({Key? key, required this.item, required this.idx, required this.audioPlayer}) : super(key: key);
@@ -135,47 +137,74 @@ class _playing_screenState extends State<playing_screen> {
               },
                 icon: Icon(Icons.arrow_back_ios),
               ),
-              SizedBox(
-                height: 50.0,
-              ),
               Center(
-                child: Column(
-                  children: [
-                    QueryArtworkWidget(
-                      id: widget.item![idx_play].id,
-                      type: ArtworkType.AUDIO,
-                      artworkHeight: 240,
-                      artworkWidth: 240,
-                    ),
-                    SizedBox(
-                      height: 40.0,
-                    ),
-                    Text(
+                child: SizedBox(
+                  height: (MediaQuery.of(context).size.height - 32)*4/7,
+                  child: Column(
+                    children: [
+                      SizedBox(
+                        height: (MediaQuery.of(context).size.height - 32)/20,
+                      ),
+                      QueryArtworkWidget(
+                        id: widget.item![idx_play].id,
+                        type: ArtworkType.AUDIO,
+                        artworkHeight: (MediaQuery.of(context).size.width - 32)/1.7,
+                        artworkWidth: (MediaQuery.of(context).size.width - 32)/1.7,
+                      ),
+                      SizedBox(
+                        height: (MediaQuery.of(context).size.height - 32)/24,
+                      ),
+                      AutoSizeText(
                         widget.item![idx_play].title,
-                        overflow: TextOverflow.fade,
                         maxLines: 1,
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 30.0,
                         ),
-                    ),
-                    SizedBox(
-                      height: 10.0,
-                    ),
-                    Text(
-                      widget.item![idx_play].artist.toString() == "<unknown>" ? "Unknown Artist" : widget.item![idx_play].artist.toString(),
-                      overflow: TextOverflow.fade,
-                      maxLines: 1,
-                      style: TextStyle(
-                        fontSize: 20.0,
+                        overflowReplacement: Marquee(
+                          text: widget.item![idx_play].title,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 30.0,
+                          ),
+                          scrollAxis: Axis.horizontal,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          blankSpace: 20.0,
+                          velocity: 100.0,
+                          pauseAfterRound: Duration(seconds: 1),
+                          startPadding: 10.0,
+                          accelerationDuration: Duration(seconds: 1),
+                          accelerationCurve: Curves.linear,
+                          decelerationDuration: Duration(milliseconds: 500),
+                          decelerationCurve: Curves.easeOut,
+                        ),
                       ),
-                    ),
-                    SizedBox(
-                      height: 150.0,
-                    ),
-                    Stack(
-                      children: [
-                        SliderTheme(
+                      SizedBox(
+                        height: 5,
+                      ),
+                      Text(
+                        widget.item![idx_play].artist.toString() == "<unknown>" ? "Unknown Artist" : widget.item![idx_play].artist.toString(),
+                        overflow: TextOverflow.fade,
+                        maxLines: 1,
+                        style: TextStyle(
+                          fontSize: 20.0,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Center(
+                child: SizedBox(
+                  height: (MediaQuery.of(context).size.height - 40)*2/7,
+                  child: Column(
+                    children: [
+                      SizedBox(
+                        height: (MediaQuery.of(context).size.height - 32)/12,
+                      ),
+                      Stack(
+                        children: [
+                          SliderTheme(
                             data: SliderThemeData(
                               thumbShape: RoundSliderThumbShape(enabledThumbRadius: 8),
                             ),
@@ -193,106 +222,107 @@ class _playing_screenState extends State<playing_screen> {
                               activeColor: Colors.grey,
                               inactiveColor: Colors.grey,
                             ),
-                        ),
-                        Positioned(
-                          top: 35,
-                          left: (2),
-                          child: Text( '       '+
-                              _pos.toString().split(".")[0].substring(2),
-                            style: TextStyle(
-                              fontSize: 12.0,
-                            ),
                           ),
-                        ),
-                        Positioned(
-                          top: 35,
-                          right: (2),
-                          child: Text(
-                              _dur.toString().split(".")[0].substring(2) + '       ',
-                            style: TextStyle(
-                              fontSize: 12.0,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(
-                      height: 20.0,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        //볼륨 온오프 버튼
-                        IconButton(
-                          onPressed: () {
-                            setState(() {
-                              if (_volume == true) {
-                                widget.audioPlayer.setVolume(0);
-                                _volume = false;
-                              }
-                              else {
-                                widget.audioPlayer.setVolume(1.0);
-                                _volume = true;
-                              }
-                            });
-                          },
-                          icon: Icon(_volume == true ? Icons.volume_down : Icons.volume_off, size: 30.0,),
-                        ),
-                        //이전곡 재생 버튼
-                        IconButton(
-                          onPressed: () {
-                            setState(() {
-                              playPrev();
-                            });
-                          },
-                          icon: Icon(Icons.skip_previous, size: 30.0,),
-                        ),
-                        //재생,중지 버튼
-                        IconButton(
-                          onPressed: () {
-                            setState(() {
-                              if (_isPlaying) {
-                                widget.audioPlayer.pause();
-                              } else {
-                                widget.audioPlayer.play();
-                              }
-                              _isPlaying = !_isPlaying;
-                            });
-                          },
-                          icon: Icon(_isPlaying ? Icons.pause : Icons.play_arrow, size: 30.0,)
-                        ),
-                        //다음곡 재생 버튼
-                        IconButton(
-                          onPressed: () {
-                            setState(() {
-                              playNext();
-                            });
-                          },
-                          icon: Icon(Icons.skip_next, size: 30.0,),
-                        ),
-                        //재생 속도 변경 버튼
-                        TextButton(
-                          style: TextButton.styleFrom(
-                            fixedSize: const Size(50, 20),
-                          ),
-                          child: Text(
-                              '${_speed[_bool.indexOf(true)]}x',
+                          Positioned(
+                            top: 35,
+                            left: (2),
+                            child: Text( '       '+
+                                _pos.toString().split(".")[0].substring(2),
                               style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
-                              )
+                                fontSize: 12.0,
+                              ),
+                            ),
                           ),
-                          onPressed: () {
-                            setState(() {
-                              changeSpeed();
-                            });
-                          },
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
+                          Positioned(
+                            top: 35,
+                            right: (2),
+                            child: Text(
+                              _dur.toString().split(".")[0].substring(2) + '       ',
+                              style: TextStyle(
+                                fontSize: 12.0,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: (MediaQuery.of(context).size.width - 32)/16,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          //볼륨 온오프 버튼
+                          IconButton(
+                            onPressed: () {
+                              setState(() {
+                                if (_volume == true) {
+                                  widget.audioPlayer.setVolume(0);
+                                  _volume = false;
+                                }
+                                else {
+                                  widget.audioPlayer.setVolume(1.0);
+                                  _volume = true;
+                                }
+                              });
+                            },
+                            icon: Icon(_volume == true ? Icons.volume_down : Icons.volume_off, size: 30.0,),
+                          ),
+                          //이전곡 재생 버튼
+                          IconButton(
+                            onPressed: () {
+                              setState(() {
+                                playPrev();
+                              });
+                            },
+                            icon: Icon(Icons.skip_previous, size: 30.0,),
+                          ),
+                          //재생,중지 버튼
+                          IconButton(
+                              onPressed: () {
+                                setState(() {
+                                  if (_isPlaying) {
+                                    widget.audioPlayer.pause();
+                                  } else {
+                                    widget.audioPlayer.play();
+                                  }
+                                  _isPlaying = !_isPlaying;
+                                });
+                              },
+                              icon: Icon(_isPlaying ? Icons.pause : Icons.play_arrow, size: 30.0,)
+                          ),
+                          //다음곡 재생 버튼
+                          IconButton(
+                            onPressed: () {
+                              setState(() {
+                                playNext();
+                              });
+                            },
+                            icon: Icon(Icons.skip_next, size: 30.0,),
+                          ),
+                          //재생 속도 변경 버튼
+                          TextButton(
+                            style: TextButton.styleFrom(
+                              fixedSize: const Size(50, 20),
+                            ),
+                            child: Text(
+                                '${_speed[_bool.indexOf(true)]}x',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                )
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                changeSpeed();
+                              });
+                            },
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                )
+              )
             ]
           )
         ),
