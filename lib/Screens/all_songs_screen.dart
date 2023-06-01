@@ -1,6 +1,5 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -15,12 +14,10 @@ class AllSongs extends StatefulWidget {
 
 class _AllSongsState extends State<AllSongs> with TickerProviderStateMixin{
   TabController? _tabController;
-  int i = 0;
-  int time = 0;
-  List<int> album_idx = [];
-  List<int> artist_idx = [];
-  List<String> title_list = [];
-  bool _isCheck = true;
+  List<int> album_idx = []; //앨범으로 곡을 나열할 때 인덱스로 사용할 리스트
+  List<int> artist_idx = []; //아티스트로 곡을 나열할 때 인덱스로 사용할 리스트
+  List<String> title_list = []; //검색기능에 사용할 리스트
+  bool _isCheck = true; //곡 title을 한번만 저장하기 위해 사용할 bool값
   @override
   void initState() {
     super.initState();
@@ -118,6 +115,7 @@ class _AllSongsState extends State<AllSongs> with TickerProviderStateMixin{
                 child: TabBarView(
                   controller: _tabController,
                   children: [
+                    //Title로 곡을 나열
                     Container(
                       child: Center(
                         child: SingleChildScrollView(
@@ -142,6 +140,7 @@ class _AllSongsState extends State<AllSongs> with TickerProviderStateMixin{
                                     if (item.data!.isEmpty) {
                                       return Center(child: Text('Nothing found!'));
                                     }
+                                    //곡 검색 기능에 사용할 리스트
                                     if (_isCheck == true) {
                                       for (int i = 0; i<item.data!.length; i++) {
                                         title_list.add(item.data![i].title);
@@ -159,7 +158,7 @@ class _AllSongsState extends State<AllSongs> with TickerProviderStateMixin{
                                               ),
                                           ),
                                           subtitle: Text(
-                                              '${item.data![index].artist}',
+                                              item.data![index].artist ?? 'Unknown Artist',
                                               style: TextStyle(
                                                 color: Colors.grey,
                                               ),
@@ -176,21 +175,21 @@ class _AllSongsState extends State<AllSongs> with TickerProviderStateMixin{
                                                     builder: (context) => playing_screen(
                                                       item: item.data,
                                                       idx: index,
-                                                      //next_songModel: item.data![index == item.data?.length ? 0 : ++index],
-                                                      audioPlayer: _audioPlayer,)));
-                                            //playSong(item.data![index].uri);
+                                                      audioPlayer: _audioPlayer,
+                                                    )
+                                                )
+                                            );
                                           }
                                       ),  itemCount: item.data!.length,
                                     );
                                   }
                               ),
-
                             ],
                           ),
                         ),
                       ),
                     ),
-
+                    //Album으로 곡을 나열
                     Container(
                         child: Center(
                           child: SingleChildScrollView(
@@ -229,28 +228,14 @@ class _AllSongsState extends State<AllSongs> with TickerProviderStateMixin{
                                           return Container(
                                             child: InkWell(
                                                 onTap: () {
-                                                  ///*
-                                                  for (time; time<item.data!.length; time++) {
+                                                  for (int i=0; i<item.data!.length; i++) {
                                                     for (int j=0; j<songModel_search!.length; j++) {
-                                                      if (songModel_search![j].album == item.data![time].album) {
+                                                      if (songModel_search![j].album == item.data![i].album) {
                                                         album_idx.add(j);
                                                         break;
                                                       }
                                                     }
                                                   }
-                                                  //*/
-                                                  /*
-                                                  while (time < item.data!.length) {
-                                                    i = 0;
-                                                    for (i; i<songModel_search!.length; i++) {
-                                                      if (songModel_search![i].album == item.data![time].album) {
-                                                        time++;
-                                                        album_idx.add(i);
-                                                        break;
-                                                      }
-                                                    }
-                                                  }
-                                                  */
                                                   Navigator.push(
                                                       context,
                                                       MaterialPageRoute(
@@ -258,8 +243,10 @@ class _AllSongsState extends State<AllSongs> with TickerProviderStateMixin{
                                                             item: songModel_search,
                                                             idx: index,
                                                             list_idx: album_idx,
-                                                            audioPlayer: _audioPlayer,)));
-                                                  //playSong(item.data![index].uri);
+                                                            audioPlayer: _audioPlayer,
+                                                          )
+                                                      )
+                                                  );
                                                 },
                                               child: Column(
                                                 children: [
@@ -297,6 +284,7 @@ class _AllSongsState extends State<AllSongs> with TickerProviderStateMixin{
                           ),
                         )
                     ),
+                    //Artist로 곡을 나열
                     Container(
                       //padding: EdgeInsets.symmetric(vertical: 10),
                         child: Center(
@@ -340,12 +328,10 @@ class _AllSongsState extends State<AllSongs> with TickerProviderStateMixin{
                                               artworkBorder: BorderRadius.circular(15),
                                             ),
                                             onTap: () {
-                                              while (time < item.data!.length) {
-                                                i = 0;
-                                                for (i; i<songModel_search!.length; i++) {
-                                                  if (songModel_search![i].artist == item.data![time].artist) {
-                                                    time++;
-                                                    artist_idx.add(i);
+                                              for (int i = 0; i < item.data!.length; i++) {
+                                                for (int j = 0; j<songModel_search!.length; j++) {
+                                                  if (songModel_search![j].artist == item.data![i].artist) {
+                                                    artist_idx.add(j);
                                                     break;
                                                   }
                                                 }
@@ -357,8 +343,10 @@ class _AllSongsState extends State<AllSongs> with TickerProviderStateMixin{
                                                         item: songModel_search,
                                                         idx: index,
                                                         list_idx: artist_idx,
-                                                        audioPlayer: _audioPlayer,)));
-                                              //playSong(item.data![index].uri);
+                                                        audioPlayer: _audioPlayer,
+                                                      )
+                                                  )
+                                              );
                                             }
                                         ),  itemCount: item.data!.length,
                                       );
@@ -369,7 +357,6 @@ class _AllSongsState extends State<AllSongs> with TickerProviderStateMixin{
                             ),
                           ),
                         )
-
                     ),
                   ],
                 ),
