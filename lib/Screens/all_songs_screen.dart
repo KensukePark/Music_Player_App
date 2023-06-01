@@ -8,7 +8,7 @@ import '../Screens/playing_screen.dart';
 import '../Screens/playing_screen_not_Title.dart';
 
 class AllSongs extends StatefulWidget {
-  List<String> list = [];
+  const AllSongs({Key? key}) : super(key: key);
   @override
   State<AllSongs> createState() => _AllSongsState();
 }
@@ -19,6 +19,8 @@ class _AllSongsState extends State<AllSongs> with TickerProviderStateMixin{
   int time = 0;
   List<int> album_idx = [];
   List<int> artist_idx = [];
+  List<String> title_list = [];
+  bool _isCheck = true;
   @override
   void initState() {
     super.initState();
@@ -58,7 +60,7 @@ class _AllSongsState extends State<AllSongs> with TickerProviderStateMixin{
             actions: <Widget>[
               IconButton(
                 onPressed: () {
-                  showSearch(context: context, delegate: Search(widget.list));
+                  showSearch(context: context, delegate: Search(title_list, songModel_search, _audioPlayer, _isCheck));
                 },
                 icon: Icon(Icons.search),
               )
@@ -140,8 +142,11 @@ class _AllSongsState extends State<AllSongs> with TickerProviderStateMixin{
                                     if (item.data!.isEmpty) {
                                       return Center(child: Text('Nothing found!'));
                                     }
-                                    for (int i = 0; i<item.data!.length; i++) {
-                                      widget.list.add(item.data![i].title);
+                                    if (_isCheck == true) {
+                                      for (int i = 0; i<item.data!.length; i++) {
+                                        title_list.add(item.data![i].title);
+                                      }
+                                      _isCheck = false;
                                     }
                                     return ListView.builder(
                                       physics: NeverScrollableScrollPhysics(),
@@ -409,16 +414,26 @@ class Search extends SearchDelegate {
     );
     throw UnimplementedError();
   }
-  final List<String> listExample;
-  Search(this.listExample);
+  List<String> title_list = [];
+  List<SongModel>? songModel_search;
+  AudioPlayer _audioPlayer = AudioPlayer();
+  bool _isCheck;
+  int sel_idx = -1;
+  Search(this.title_list, this.songModel_search, this._audioPlayer, this._isCheck);
   List<String> recentList = ["비트코인", "이더리움", "리플"];
   List<String> emptyList = [];
   @override
   Widget buildSuggestions(BuildContext context) {
+    if (_isCheck == true) {
+      for (int i=0; i<songModel_search!.length; i++) {
+        title_list.add(songModel_search![i].title);
+      }
+    }
+    print(title_list);
     List<String> suggestionList = [];
     query.isEmpty
         ? suggestionList = emptyList //In the true case
-        : suggestionList.addAll(listExample.where(
+        : suggestionList.addAll(title_list.where(
 
           (element) => element.toLowerCase().contains(query),
     ));
@@ -432,13 +447,22 @@ class Search extends SearchDelegate {
             leading: query.isEmpty ? Icon(Icons.access_time) : SizedBox(),
             onTap: () {
               selectedResult = suggestionList[index];
-              /*
-              if (selectedResult == "비트코인(BTC)")
-                _onBtcPressed();
-              else if (selectedResult == "이더리움(ETH)")
-                _onEthPressed();
-
-               */
+              for (int i = 0; i<songModel_search!.length; i++) {
+                if (songModel_search![i].title == selectedResult) {
+                  sel_idx = i;
+                  break;
+                }
+              }
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => playing_screen(
+                        item: songModel_search,
+                        idx: sel_idx,
+                        audioPlayer: _audioPlayer,
+                      )
+                  )
+              );
             }
         );
       },
