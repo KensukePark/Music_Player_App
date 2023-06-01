@@ -59,7 +59,7 @@ class playing_not_Title_screenState extends State<playing_screen_not_Title> {
   void playPrev() {
     try { //음악 재생
       if (idx_play > 0) --idx_play;
-      else idx_play = widget.item!.length-2;
+      else idx_play = widget.item!.length-1;
       widget.audioPlayer.setAudioSource(
           AudioSource.uri(
               Uri.parse(widget.item![widget.list_idx[idx_play]].uri!)
@@ -85,7 +85,7 @@ class playing_not_Title_screenState extends State<playing_screen_not_Title> {
   //다음 인덱스의 음악 재생
   void playNext() {
     try { //음악 재생
-      if (idx_play < (widget.item!.length-2)) idx_play++;
+      if (idx_play < (widget.item!.length-1)) idx_play++;
       else idx_play = 0;
       widget.audioPlayer.setAudioSource(
           AudioSource.uri(
@@ -150,11 +150,15 @@ class playing_not_Title_screenState extends State<playing_screen_not_Title> {
                             SizedBox(
                               height: (MediaQuery.of(context).size.height - 32)/20,
                             ),
-                            QueryArtworkWidget(
-                              id: widget.item![widget.list_idx[idx_play]].id,
-                              type: ArtworkType.AUDIO,
-                              artworkHeight: (MediaQuery.of(context).size.width - 32)/1.7,
-                              artworkWidth: (MediaQuery.of(context).size.width - 32)/1.7,
+                            Container(
+                              height: (MediaQuery.of(context).size.width - 32)/1.7,
+                              width: (MediaQuery.of(context).size.width - 32)/1.7,
+                              child:QueryArtworkWidget(
+                                id: widget.item![widget.list_idx[idx_play]].id,
+                                type: ArtworkType.AUDIO,
+                                artworkHeight: (MediaQuery.of(context).size.width - 32)/1.7,
+                                artworkWidth: (MediaQuery.of(context).size.width - 32)/1.7,
+                              ),
                             ),
                             SizedBox(
                               height: (MediaQuery.of(context).size.height - 32)/24,

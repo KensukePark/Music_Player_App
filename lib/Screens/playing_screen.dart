@@ -145,11 +145,15 @@ class _playing_screenState extends State<playing_screen> {
                       SizedBox(
                         height: (MediaQuery.of(context).size.height - 32)/20,
                       ),
-                      QueryArtworkWidget(
-                        id: widget.item![idx_play].id,
-                        type: ArtworkType.AUDIO,
-                        artworkHeight: (MediaQuery.of(context).size.width - 32)/1.7,
-                        artworkWidth: (MediaQuery.of(context).size.width - 32)/1.7,
+                      Container(
+                        height: (MediaQuery.of(context).size.width - 32)/1.7,
+                        width: (MediaQuery.of(context).size.width - 32)/1.7,
+                        child:QueryArtworkWidget(
+                          id: widget.item![idx_play].id,
+                          type: ArtworkType.AUDIO,
+                          artworkHeight: (MediaQuery.of(context).size.width - 32)/1.7,
+                          artworkWidth: (MediaQuery.of(context).size.width - 32)/1.7,
+                        ),
                       ),
                       SizedBox(
                         height: (MediaQuery.of(context).size.height - 32)/24,

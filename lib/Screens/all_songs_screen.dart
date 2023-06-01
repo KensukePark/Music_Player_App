@@ -224,6 +224,17 @@ class _AllSongsState extends State<AllSongs> with TickerProviderStateMixin{
                                           return Container(
                                             child: InkWell(
                                                 onTap: () {
+                                                  ///*
+                                                  for (time; time<item.data!.length; time++) {
+                                                    for (int j=0; j<songModel_search!.length; j++) {
+                                                      if (songModel_search![j].album == item.data![time].album) {
+                                                        album_idx.add(j);
+                                                        break;
+                                                      }
+                                                    }
+                                                  }
+                                                  //*/
+                                                  /*
                                                   while (time < item.data!.length) {
                                                     i = 0;
                                                     for (i; i<songModel_search!.length; i++) {
@@ -234,6 +245,7 @@ class _AllSongsState extends State<AllSongs> with TickerProviderStateMixin{
                                                       }
                                                     }
                                                   }
+                                                  */
                                                   Navigator.push(
                                                       context,
                                                       MaterialPageRoute(
@@ -311,7 +323,7 @@ class _AllSongsState extends State<AllSongs> with TickerProviderStateMixin{
                                         shrinkWrap: true,
                                         itemBuilder: (context, index) => ListTile(
                                             title: Text(
-                                                item.data![index].artist ?? "Unknown Artist",
+                                                item.data![index].artist ?? 'Unknown Artist',
                                                 style: TextStyle(
                                                   fontSize: 18.0,
                                                   color: Colors.white,
@@ -368,7 +380,7 @@ class Search extends SearchDelegate {
   @override
   List<Widget> buildActions(BuildContext context) {
     return <Widget>[
-      IconButton(
+      IconButton( //검색창 비우기
         icon: Icon(Icons.close),
         onPressed: () {
           query = "";
@@ -408,7 +420,7 @@ class Search extends SearchDelegate {
         ? suggestionList = emptyList //In the true case
         : suggestionList.addAll(listExample.where(
 
-          (element) => element.contains(query),
+          (element) => element.toLowerCase().contains(query),
     ));
     return ListView.builder(
       itemCount: suggestionList.length,
