@@ -8,7 +8,7 @@ import '../Screens/playing_screen.dart';
 import '../Screens/playing_screen_not_Title.dart';
 
 class AllSongs extends StatefulWidget {
-  const AllSongs({Key? key}) : super(key: key);
+  List<String> list = [];
   @override
   State<AllSongs> createState() => _AllSongsState();
 }
@@ -55,6 +55,14 @@ class _AllSongsState extends State<AllSongs> with TickerProviderStateMixin{
           appBar: AppBar(
             automaticallyImplyLeading: false,
             title: const Text('Music Player'),
+            actions: <Widget>[
+              IconButton(
+                onPressed: () {
+                  showSearch(context: context, delegate: Search(widget.list));
+                },
+                icon: Icon(Icons.search),
+              )
+            ],
           ),
           bottomNavigationBar: Material(
             color: Color(0xff646464),
@@ -131,6 +139,9 @@ class _AllSongsState extends State<AllSongs> with TickerProviderStateMixin{
                                     }
                                     if (item.data!.isEmpty) {
                                       return Center(child: Text('Nothing found!'));
+                                    }
+                                    for (int i = 0; i<item.data!.length; i++) {
+                                      widget.list.add(item.data![i].title);
                                     }
                                     return ListView.builder(
                                       physics: NeverScrollableScrollPhysics(),
@@ -349,6 +360,76 @@ class _AllSongsState extends State<AllSongs> with TickerProviderStateMixin{
             ],
           )
       ),
+    );
+  }
+}
+
+class Search extends SearchDelegate {
+  @override
+  List<Widget> buildActions(BuildContext context) {
+    return <Widget>[
+      IconButton(
+        icon: Icon(Icons.close),
+        onPressed: () {
+          query = "";
+        },
+      )
+    ];
+    throw UnimplementedError();
+  }
+  @override
+  Widget buildLeading(BuildContext context) {
+    return IconButton(
+      icon: Icon(Icons.arrow_back),
+      onPressed: () {
+        Navigator.pop(context);
+      },
+    );
+    throw UnimplementedError();
+  }
+  String selectedResult = "";
+  @override
+  Widget buildResults(BuildContext context) {
+    return Container(
+        child: Center(
+          child: Text(selectedResult),
+        )
+    );
+    throw UnimplementedError();
+  }
+  final List<String> listExample;
+  Search(this.listExample);
+  List<String> recentList = ["비트코인", "이더리움", "리플"];
+  List<String> emptyList = [];
+  @override
+  Widget buildSuggestions(BuildContext context) {
+    List<String> suggestionList = [];
+    query.isEmpty
+        ? suggestionList = emptyList //In the true case
+        : suggestionList.addAll(listExample.where(
+
+          (element) => element.contains(query),
+    ));
+    return ListView.builder(
+      itemCount: suggestionList.length,
+      itemBuilder: (context, index) {
+        return ListTile(
+            title: Text(
+              suggestionList[index],
+            ),
+            leading: query.isEmpty ? Icon(Icons.access_time) : SizedBox(),
+            onTap: () {
+              selectedResult = suggestionList[index];
+              /*
+              if (selectedResult == "비트코인(BTC)")
+                _onBtcPressed();
+              else if (selectedResult == "이더리움(ETH)")
+                _onEthPressed();
+
+               */
+            }
+        );
+      },
     );
   }
 }
